@@ -14,9 +14,9 @@ template: !include templates.yaml
 
 logger:
   filters:
-    homeassistant.loader: warning
+    homeassistant.loader:
       - "We found a custom integration presence_simulation which has not been tested by Home Assistant."
       - "We found a custom integration hacs which has not been tested by Home Assistant."
       - "We found a custom integration climate_scheduler which has not been tested by Home Assistant."
-    custom_components.presence_simulation: warning
+    custom_components.presence_simulation:
       - "Presence simulation switch switch.presence_simulation_lights is not on, can't be turned off"

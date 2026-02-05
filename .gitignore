@@ -10,3 +10,6 @@ home-assistant.log*
 
 # Zigbee2MQTT runtime state
 zigbee2mqtt/state.json
+
+# Home Assistant Cloud
+.cloud/

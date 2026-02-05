@@ -87,11 +87,11 @@
       }}'
     boundary_ts: "{% if should_be_open %}\n  {{ open_ts }}\n{% else %}\n  {{ close_ts
       }}\n{% endif %}"
-    eligible_members: "{% set out = [] %} {% for s in expand('cover.shutters') %}\n
-      \ {% set was_manual = (s.context.user_id is not none) %}\n  {% set changed_ts
+    eligible_members: "{% set ns = namespace(out=[]) %} {% for s in expand('cover.shutters')
+      %}\n  {% set was_manual = (s.context.user_id is not none) %}\n  {% set changed_ts
       = as_timestamp(s.last_changed) | float %}\n  {% if not (was_manual and changed_ts
-      > boundary_ts) %}\n    {% set _ = out.append(s.entity_id) %}\n  {% endif %}\n{%
-      endfor %} {{ out }}"
+      > boundary_ts) %}\n    {% set ns.out = ns.out + [s.entity_id] %}\n  {% endif
+      %}\n{% endfor %} {{ ns.out }}"
   mode: single
 - id: '1765675206636'
   alias: Desk button Tom's office
