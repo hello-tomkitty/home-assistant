@@ -1,0 +1,133 @@
+- sensor:
+    - name: "Light switch entity list"
+      unique_id: light_switch_entity_list
+      state: "ok"
+      attributes:
+        entities: >-
+          {{
+            states.switch
+            | rejectattr('attributes.entity_category', 'in', ['config','diagnostic'])
+            | rejectattr(
+                'entity_id',
+                'search',
+                '_detach_relay_mode|_power_on_state|_delay|_indicator|_led|_network|_status|_restore|_startup|_mode|_child_lock|_open_window'
+              )
+            | rejectattr(
+                'entity_id',
+                'search',
+                'schedule|washing_machine|entrywaytablet'
+              )
+            | rejectattr('entity_id', 'equalto', 'switch.zigbee2mqtt_bridge_permit_join')
+            | rejectattr('entity_id', 'equalto', 'switch.bedroom_left_light')
+            | rejectattr('entity_id', 'equalto', 'switch.bedroom_right_light')
+            | map(attribute='entity_id')
+            | list
+          }}
+
+- sensor:
+    - name: "Light switches SOT"
+      unique_id: light_switches_sot
+      state: "ok"
+      attributes:
+        entities: >-
+          {%- set exclude_entity_ids = [
+            'switch.zigbee2mqtt_bridge_permit_join',
+            'switch.bedroom_left_light',
+            'switch.bedroom_right_light',
+            'switch.washing_machine_power',
+            'switch.washing_machine_child_lock',
+            'switch.entrywaytablet_screen',
+            'switch.entrywaytablet_screensaver'
+          ] -%}
+          {%- set exclude_regex =
+            '_detach_relay_mode|_power_on_state|_delayed|_delay|_indicator|_led|_network|_status|_restore|_startup|_mode|schedule'
+          -%}
+
+          {%- set ns = namespace(items=[]) -%}
+          {%- for s in states.switch -%}
+            {%- set e = s.entity_id -%}
+            {%- set cat = s.attributes.entity_category -%}
+            {%- set floor_label = floor_name(e) -%}
+            {%- set area_label  = area_name(e) -%}
+
+            {%- set excluded =
+              (cat in ['config','diagnostic'])
+              or (e in exclude_entity_ids)
+              or ((e | regex_search(exclude_regex)) is not none)
+              or e.startswith('switch.washing_machine')
+            -%}
+
+            {%- if (not excluded) and floor_label and area_label -%}
+              {%- set ns.items = ns.items + [{
+                'floor': floor_label,
+                'area': area_label,
+                'entity': e
+              }] -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- set items = ns.items
+            | sort(attribute='entity')
+            | sort(attribute='area')
+            | sort(attribute='floor')
+          -%}
+          {{ items | map(attribute='entity') | list }}
+
+        rows_json: >-
+          {%- set exclude_entity_ids = [
+            'switch.zigbee2mqtt_bridge_permit_join',
+            'switch.bedroom_left_light',
+            'switch.bedroom_right_light',
+            'switch.washing_machine_power',
+            'switch.washing_machine_child_lock',
+            'switch.entrywaytablet_screen',
+            'switch.entrywaytablet_screensaver'
+          ] -%}
+          {%- set exclude_regex =
+            '_detach_relay_mode|_power_on_state|_delayed|_delay|_indicator|_led|_network|_status|_restore|_startup|_mode|schedule'
+          -%}
+
+          {%- set ns = namespace(items=[]) -%}
+          {%- for s in states.switch -%}
+            {%- set e = s.entity_id -%}
+            {%- set cat = s.attributes.entity_category -%}
+            {%- set floor_label = floor_name(e) -%}
+            {%- set area_label  = area_name(e) -%}
+
+            {%- set excluded =
+              (cat in ['config','diagnostic'])
+              or (e in exclude_entity_ids)
+              or ((e | regex_search(exclude_regex)) is not none)
+              or e.startswith('switch.washing_machine')
+            -%}
+
+            {%- if (not excluded) and floor_label and area_label -%}
+              {%- set ns.items = ns.items + [{
+                'floor': floor_label,
+                'area': area_label,
+                'entity': e
+              }] -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- set items = ns.items
+            | sort(attribute='entity')
+            | sort(attribute='area')
+            | sort(attribute='floor')
+          -%}
+
+          {%- set out = namespace(rows=[], prev_floor='', prev_area='') -%}
+          {%- for item in items -%}
+            {%- if item.floor != out.prev_floor -%}
+              {%- set out.rows = out.rows + [{'type': 'section', 'label': item.floor}] -%}
+              {%- set out.prev_floor = item.floor -%}
+              {%- set out.prev_area = '' -%}
+            {%- endif -%}
+            {%- if item.area != out.prev_area -%}
+              {%- set out.rows = out.rows + [{'type': 'section', 'label': '— ' ~ item.area}] -%}
+              {%- set out.prev_area = item.area -%}
+            {%- endif -%}
+            {%- set out.rows = out.rows + [{'entity': item.entity}] -%}
+          {%- endfor -%}
+
+          {{ out.rows | tojson }}

@@ -1,0 +1,672 @@
+{
+    "0x08ddebfffef3647d": {
+        "battery": 100,
+        "voltage": 3000,
+        "linkquality": 140,
+        "last_seen": "2026-02-01T09:27:27.972Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 8704,
+            "latest_version": 8704,
+            "latest_source": null,
+            "latest_release_notes": null
+        }
+    },
+    "0x94b216fffe8c4a10": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 9.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 180,
+        "last_seen": "2026-02-01T09:56:09.321Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08fd52fffe07728b": {
+        "state_l1": "OFF",
+        "power_on_behavior_l1": "off",
+        "external_trigger_mode": "edge",
+        "detach_relay_mode": {
+            "detach_relay_outlet1": "DISABLE",
+            "detach_relay_outlet2": "DISABLE",
+            "detach_relay_outlet3": "DISABLE"
+        },
+        "delayed_power_on_state_channel_1_l1": false,
+        "delayed_power_on_time_l1": 53,
+        "state_l2": "OFF",
+        "power_on_behavior_l2": "off",
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state_channel_2_l2": false,
+        "delayed_power_on_time_l2": 42.5,
+        "linkquality": 148,
+        "external_trigger_mode_l1": "edge",
+        "external_trigger_mode_l2": "edge",
+        "last_seen": "2026-02-01T09:59:04.339Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4103,
+            "latest_version": 4103,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/mini-zb2gs_v1.0.7.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x04e3e5fffea35360": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 8.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 160,
+        "last_seen": "2026-02-01T09:51:32.204Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x04e3e5fffeec4153": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 17,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "linkquality": 144,
+        "state": "OFF",
+        "last_seen": "2026-02-01T09:51:36.766Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xbc8d7efffe9c9f95": {
+        "network_indicator": false,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 39.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "linkquality": 132,
+        "state": "OFF",
+        "last_seen": "2026-02-01T09:58:13.180Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x94b216fffea09dcf": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 24.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "linkquality": 172,
+        "state": "OFF",
+        "last_seen": "2026-02-01T09:59:37.129Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x94b216fffe8cc45c": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 9.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "linkquality": 116,
+        "state": "OFF",
+        "last_seen": "2026-02-01T09:55:12.315Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x7cc6b6fffecabc06": {
+        "network_indicator": false,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 14,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "state": "OFF",
+        "linkquality": 192,
+        "last_seen": "2026-02-01T09:51:34.309Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x04e3e5fffea24c7c": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 8,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "ON",
+        "linkquality": 132,
+        "last_seen": "2026-02-01T09:56:06.017Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        },
+        "power_on_behavior": "previous"
+    },
+    "0x04e3e5fffed2370b": {
+        "network_indicator": false,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 1.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "state": "OFF",
+        "linkquality": 156,
+        "last_seen": "2026-02-01T09:53:42.696Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x94b216fffe8c2067": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 9,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 180,
+        "last_seen": "2026-02-01T09:55:41.336Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x94b216fffea099d1": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 59,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "state": "OFF",
+        "linkquality": 168,
+        "last_seen": "2026-02-01T09:51:29.983Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xfc4d6afffe639245": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 13,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 212,
+        "last_seen": "2026-02-01T09:53:40.590Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x7cc6b6fffec93870": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 13,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 220,
+        "last_seen": "2026-02-01T09:49:51.885Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x1cc089fffece7108": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 36.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 148,
+        "last_seen": "2026-02-01T09:58:42.693Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffe5951e9": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 36.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 255,
+        "last_seen": "2026-02-01T09:55:32.157Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffe6c1234": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 9.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 176,
+        "last_seen": "2026-02-01T09:50:29.847Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffeb3de72": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 31.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 152,
+        "last_seen": "2026-02-01T09:54:31.554Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffe596127": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 33.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "ON",
+        "linkquality": 152,
+        "last_seen": "2026-02-01T09:57:16.536Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x1cc089fffece6a7f": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 9.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "ON",
+        "linkquality": 152,
+        "last_seen": "2026-02-01T09:56:19.047Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x1cc089fffecddd13": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 21.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 148,
+        "last_seen": "2026-02-01T09:53:28.673Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xfc4d6afffe5027d5": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 39.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 192,
+        "last_seen": "2026-02-01T09:50:28.513Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffec72d5c": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 32,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "state": "OFF",
+        "linkquality": 136,
+        "last_seen": "2026-02-01T09:54:45.156Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xc09b9efffed42975": {
+        "tamper": true,
+        "battery": 100,
+        "voltage": 3100,
+        "contact": true,
+        "battery_low": false,
+        "linkquality": 136,
+        "last_seen": "2026-02-01T09:58:52.950Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 8704,
+            "latest_version": 8704,
+            "latest_source": null,
+            "latest_release_notes": null
+        }
+    },
+    "0x94a081fffed71e48": {
+        "state": "ON",
+        "power_on_behavior": "off",
+        "device_work_mode": "Zigbee router",
+        "detach_relay_mode": {
+            "detach_relay_outlet1": "DISABLE",
+            "detach_relay_outlet2": "DISABLE",
+            "detach_relay_outlet3": "DISABLE"
+        },
+        "linkquality": 136,
+        "last_seen": "2026-02-01T09:51:01.822Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4102,
+            "latest_version": 4102,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbm5-120-zr_v1.0.6.ota",
+            "latest_release_notes": null
+        },
+        "network_indicator": false
+    },
+    "0x1cc089fffed8079d": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 23,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 128,
+        "last_seen": "2026-02-01T09:51:36.389Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xfc4d6afffe6e0864": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 57,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "pulse",
+        "state": "OFF",
+        "linkquality": 152,
+        "last_seen": "2026-02-01T09:54:57.776Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x4c97a1fffece1dbd": {
+        "state_l1": "OFF",
+        "power_on_behavior_l1": "off",
+        "device_work_mode": "Zigbee router",
+        "detach_relay_mode": {
+            "detach_relay_outlet1": "DISABLE",
+            "detach_relay_outlet2": "DISABLE",
+            "detach_relay_outlet3": "DISABLE"
+        },
+        "state_l2": "OFF",
+        "power_on_behavior_l2": "off",
+        "network_indicator": false,
+        "linkquality": 128,
+        "last_seen": "2026-02-01T09:56:24.234Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4102,
+            "latest_version": 4102,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbm5-120-zr_v1.0.6.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x1cc089fffe2466cb": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 58.5,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 148,
+        "last_seen": "2026-02-01T09:55:45.862Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x08b95ffffe58e16b": {
+        "network_indicator": true,
+        "turbo_mode": false,
+        "delayed_power_on_state": false,
+        "delayed_power_on_time": 12,
+        "detach_relay_mode": false,
+        "external_trigger_mode": "edge",
+        "state": "OFF",
+        "linkquality": 124,
+        "last_seen": "2026-02-01T09:54:42.544Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 4104,
+            "latest_version": 4104,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/zbminir2_v1.0.8.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xc09b9efffe8462b3": {
+        "local_temperature_calibration": 0,
+        "child_lock": "UNLOCK",
+        "open_window": "OFF",
+        "frost_protection_temperature": 7,
+        "temperature_sensor_select": "external",
+        "idle_steps": 20,
+        "closing_steps": 516,
+        "valve_opening_limit_voltage": 1795,
+        "valve_closing_limit_voltage": 2776,
+        "valve_motor_running_voltage": 1150,
+        "external_temperature_input": 22.3,
+        "valve_opening_degree": 100,
+        "valve_closing_degree": 100,
+        "temperature_accuracy": -1,
+        "local_temperature": 22.3,
+        "occupied_heating_setpoint": 25,
+        "system_mode": "heat",
+        "running_state": "heat",
+        "battery": 100,
+        "weekly_schedule_monday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_tuesday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_wednesday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_thursday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_friday": "00:00/16 05:00/30 08:00/20 16:00/30 22:00/16 22:00/16",
+        "weekly_schedule_saturday": "00:00/16 07:00/19 10:00/19 10:00/19 10:00/19 23:00/16",
+        "weekly_schedule_sunday": "00:00/16 07:00/19 10:00/19 10:00/19 10:00/19 23:00/16",
+        "linkquality": 196,
+        "timer_mode_target_temp": 4,
+        "temporary_mode_duration": 0,
+        "temporary_mode_select": "boost",
+        "last_seen": "2026-02-01T09:59:00.722Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 5121,
+            "latest_version": 5121,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/trvzb_v1.4.1.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0xc09b9efffe845e2d": {
+        "local_temperature_calibration": -0.1,
+        "child_lock": "UNLOCK",
+        "open_window": "OFF",
+        "frost_protection_temperature": 7,
+        "temperature_sensor_select": "internal",
+        "idle_steps": 141,
+        "closing_steps": 374,
+        "valve_opening_limit_voltage": 2311,
+        "valve_closing_limit_voltage": 2744,
+        "valve_motor_running_voltage": 1424,
+        "external_temperature_input": 19.4,
+        "valve_opening_degree": 100,
+        "valve_closing_degree": 100,
+        "temperature_accuracy": -1,
+        "local_temperature": 24.5,
+        "occupied_heating_setpoint": 23,
+        "system_mode": "heat",
+        "running_state": "idle",
+        "battery": 100,
+        "weekly_schedule_monday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_tuesday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_wednesday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_thursday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_friday": "00:00/16 07:00/19 10:00/16 10:00/16 17:00/19 23:00/16",
+        "weekly_schedule_saturday": "00:00/16 07:00/19 10:00/19 10:00/19 10:00/19 23:00/16",
+        "weekly_schedule_sunday": "00:00/16 07:00/19 10:00/19 10:00/19 10:00/19 23:00/16",
+        "timer_mode_target_temp": 6,
+        "temporary_mode_duration": 0,
+        "temporary_mode_select": "boost",
+        "linkquality": 132,
+        "last_seen": "2026-02-01T09:56:08.092Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 5121,
+            "latest_version": 5121,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/trvzb_v1.4.1.ota",
+            "latest_release_notes": null
+        }
+    },
+    "0x8c73dafffe846d06": {
+        "battery": 100,
+        "humidity": 33.2,
+        "temperature": 22.3,
+        "comfort_temperature_min": 19,
+        "comfort_temperature_max": 27,
+        "comfort_humidity_min": 40,
+        "comfort_humidity_max": 60,
+        "temperature_units": "celsius",
+        "temperature_calibration": 0,
+        "humidity_calibration": 0,
+        "last_seen": "2026-02-01T09:47:33.332Z",
+        "linkquality": 128,
+        "update": {
+            "state": "idle",
+            "installed_version": 8960,
+            "latest_version": 8960,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Sonoff/snzb-02d_v2.3.0.ota",
+            "latest_release_notes": null
+        }
+    }
+}
