@@ -1,5 +1,12 @@
 secrets.yaml
-*.db
 *.log
 home-assistant.log*
 .storage/
+
+# Home Assistant database
+*.db
+*.db-shm
+*.db-wal
+
+# Zigbee2MQTT runtime state
+zigbee2mqtt/state.json
