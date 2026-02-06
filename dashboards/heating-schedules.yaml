@@ -1,0 +1,26 @@
+kiosk_mode:
+  user_settings:
+    - users:
+        - tablet
+      hide_account: true
+views:
+  - title: Heating - Schedules (PLEASE BE CAREFUL!)
+    type: panel
+    cards:
+      - type: custom:mod-card
+        card_mod:
+          style: |
+            ha-card {
+              background: #ffc0cb !important; /* soft pink */
+              border-radius: 14px !important;
+              box-shadow: none !important;
+              padding: 10px !important;
+            }
+
+            /* Prevent nested cards from reintroducing their own background */
+            ha-card ha-card {
+              background: transparent !important;
+              box-shadow: none !important;
+            }
+        card:
+          type: custom:climate-scheduler-card

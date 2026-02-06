@@ -1,0 +1,113 @@
+kiosk_mode:
+  user_settings:
+    - users:
+        - tablet
+      hide_account: true
+title: Fire TV
+path: fire-tv
+icon: mdi:television
+theme: default
+views:
+  - title: Remote
+    path: remote
+    icon: mdi:remote
+    type: masonry
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              # Living Room Fire TV
+              Remote + quick controls.
+          - type: custom:firemote-card
+            entity: media_player.fire_tv
+            device_family: amazon-fire
+            device_type: fire_tv_stick_4k_second_gen
+            compatibility_mode: default
+            defaultRemoteStyle_override: ""
+            app_launch_4: youtube
+            app_launch_5: ""
+            app_launcher_relative_size: 65
+          - type: media-control
+            entity: media_player.fire_tv
+      - type: entities
+        title: Status & Quick Actions
+        show_header_toggle: false
+        entities:
+          - entity: media_player.fire_tv
+            name: Fire TV (Living Room)
+          - type: divider
+          - type: button
+            name: Play / Pause
+            icon: mdi:play-pause
+            tap_action:
+              action: call-service
+              service: media_player.media_play_pause
+              target:
+                entity_id: media_player.fire_tv
+          - type: button
+            name: Home
+            icon: mdi:home
+            tap_action:
+              action: call-service
+              service: media_player.select_source
+              target:
+                entity_id: media_player.fire_tv
+              data:
+                source: HOME
+          - type: button
+            name: Back
+            icon: mdi:arrow-left
+            tap_action:
+              action: call-service
+              service: media_player.select_source
+              target:
+                entity_id: media_player.fire_tv
+              data:
+                source: BACK
+          - type: divider
+          - entity: media_player.fire_tv
+            name: Volume (if supported)
+            type: attribute
+            attribute: volume_level
+          - type: button
+            name: Volume Up
+            icon: mdi:volume-plus
+            tap_action:
+              action: call-service
+              service: media_player.volume_up
+              target:
+                entity_id: media_player.fire_tv
+          - type: button
+            name: Volume Down
+            icon: mdi:volume-minus
+            tap_action:
+              action: call-service
+              service: media_player.volume_down
+              target:
+                entity_id: media_player.fire_tv
+          - type: button
+            name: Mute
+            icon: mdi:volume-mute
+            tap_action:
+              action: call-service
+              service: media_player.volume_mute
+              target:
+                entity_id: media_player.fire_tv
+              data:
+                is_volume_muted: true
+  - title: Apps
+    path: apps
+    icon: mdi:apps
+    type: masonry
+    cards:
+      - type: markdown
+        content: |
+          # App Launchers
+          Configure your most-used apps here (optional).
+      - type: custom:firemote-card
+        entity: media_player.fire_tv
+        device_family: amazon-fire
+        device_type: fire_tv_4_series
+        compatibility_mode: default
+        app_launcher_relative_size: 85

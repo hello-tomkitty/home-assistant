@@ -1,6 +1,0 @@
-title: YAML Test
-views:
-  - title: Test
-    cards:
-      - type: markdown
-        content: "If you can see this, YAML dashboards work."

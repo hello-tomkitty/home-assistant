@@ -1,4 +1,3 @@
-
 # Loads default set of integrations. Do not remove.
 default_config:
 
@@ -20,23 +19,34 @@ logger:
       - "We found a custom integration climate_scheduler which has not been tested by Home Assistant."
     custom_components.presence_simulation:
       - "Presence simulation switch switch.presence_simulation_lights is not on, can't be turned off"
-      
+
 lovelace:
   dashboards:
-    yaml-test:
-      mode: yaml
-      filename: lovelace/dashboards/test.yaml
-      title: YAML Test
-      icon: mdi:test-tube
-      show_in_sidebar: true
     mode-yaml:
       mode: yaml
-      filename: lovelace/dashboards/mode.yaml
+      filename: dashboards/mode.yaml
       title: Mode
       icon: mdi:apple-keyboard-command
       show_in_sidebar: true
-
-#lovelace:
+    light-switches-yaml:
+      mode: yaml
+      filename: dashboards/lights-switches.yaml
+      title: Lights - Switches
+      icon: mdi:light-switch
+      show_in_sidebar: true
+    heating-thermostats-yaml:
+      mode: yaml
+      filename: dashboards/heating-thermostats.yaml
+      title: Heating - Thermostats
+      icon: mdi:thermostat
+      show_in_sidebar: true
+    heating-schedules-yaml:
+      mode: yaml
+      filename: dashboards/heating-schedules.yaml
+      title: Heating - Schedules
+      icon: mdi:heating-coil
+      show_in_sidebar: true
+      #lovelace:
 #  resource_mode: yaml
 #  resources:
 #    - url: /climate_scheduler/static/climate-scheduler-card.js?v=1.14.12
@@ -47,7 +57,7 @@ lovelace:
 #      filename: ui-lovelace.yaml
 #      title: Overview
 #      icon: mdi:view-dashboard
-#      show_in_sidebar: true  
+#      show_in_sidebar: true
 #    lovelace-home:
 #      mode: yaml
 #      filename: lovelace/dashboards/home.yaml
