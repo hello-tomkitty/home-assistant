@@ -20,3 +20,44 @@ logger:
       - "We found a custom integration climate_scheduler which has not been tested by Home Assistant."
     custom_components.presence_simulation:
       - "Presence simulation switch switch.presence_simulation_lights is not on, can't be turned off"
+      
+lovelace:
+  dashboards:
+    yaml-test:
+      mode: yaml
+      filename: lovelace/dashboards/test.yaml
+      title: YAML Test
+      icon: mdi:test-tube
+      show_in_sidebar: true
+    mode-yaml:
+      mode: yaml
+      filename: lovelace/dashboards/mode.yaml
+      title: Mode
+      icon: mdi:apple-keyboard-command
+      show_in_sidebar: true
+
+#lovelace:
+#  resource_mode: yaml
+#  resources:
+#    - url: /climate_scheduler/static/climate-scheduler-card.js?v=1.14.12
+#      type: module
+#  dashboards:
+#    lovelace:
+#      mode: yaml
+#      filename: ui-lovelace.yaml
+#      title: Overview
+#      icon: mdi:view-dashboard
+#      show_in_sidebar: true  
+#    lovelace-home:
+#      mode: yaml
+#      filename: lovelace/dashboards/home.yaml
+#      title: Home
+#      icon: mdi:home
+#      show_in_sidebar: true
+
+#    lovelace-security:
+#      mode: yaml
+#      filename: lovelace/dashboards/security.yaml
+#     title: Security
+#     icon: mdi:shield-home
+#     show_in_sidebar: true

@@ -2,6 +2,7 @@ secrets.yaml
 *.log
 home-assistant.log*
 .storage/
+.ha_run.lock
 
 # Home Assistant database
 *.db
