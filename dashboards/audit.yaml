@@ -1,0 +1,59 @@
+title: Admin / Audits
+views:
+  - title: Audits
+    path: audits
+    icon: mdi:clipboard-check
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🧪 Configuration Audits
+              Run validation checks for mappings and schedulers.
+              - **Nightly runs are silent**
+              - **Buttons below run verbose audits**
+          - type: custom:mushroom-template-card
+            primary: Home Mode Mapping Audit
+            secondary: Validate Home ↔ Lighting ↔ Climate consistency
+            icon: mdi:home-search
+            icon_color: blue
+            tap_action:
+              action: call-service
+              service: script.home_mode_sync_single_source_of_truth
+              data:
+                audit: true
+                verbose: true
+          - type: custom:mushroom-template-card
+            primary: Climate Scheduler Audit
+            secondary: Validate profiles vs helper options
+            icon: mdi:thermometer-check
+            icon_color: orange
+            tap_action:
+              action: call-service
+              service: script.climate_scheduler_audit_profiles_consistency
+              data:
+                verbose: true
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## 🔕 Silent Runs (Notify on errors only)
+          - type: custom:mushroom-template-card
+            primary: Home Mode Audit (silent)
+            icon: mdi:home-alert-outline
+            icon_color: grey
+            tap_action:
+              action: call-service
+              service: script.home_mode_sync_single_source_of_truth
+              data:
+                audit: true
+                verbose: false
+          - type: custom:mushroom-template-card
+            primary: Climate Scheduler Audit (silent)
+            icon: mdi:home-thermometer-outline
+            icon_color: grey
+            tap_action:
+              action: call-service
+              service: script.climate_scheduler_audit_profiles_consistency
+              data:
+                verbose: false

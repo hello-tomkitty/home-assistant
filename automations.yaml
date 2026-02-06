@@ -102,9 +102,6 @@
     type: action
     subtype: single
     trigger: device
-  - trigger: state
-    entity_id:
-    - update.tom_s_office_button_near_window
   conditions: []
   actions:
   - type: toggle

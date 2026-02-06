@@ -1,0 +1,1237 @@
+views:
+  - title: Alarms
+    path: alarms
+    icon: mdi:alarm-light
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: "## Unavailable devices"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important; /* soft pink */
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+
+                  {%- set excluded_entities = [
+                    'notify.entrywaytablet_overlay_message',
+                    'notify.entrywaytablet_text_to_speech',
+                    'number.entrywaytablet_screensaver_brightness',
+                    'remote.fire_tv',
+                    'select.washing_machine_active_program',
+                    'sensor.washing_machine_program_finish_time',
+                    'sensor.washing_machine_program_progress'
+                  ] -%}
+
+                  {%- set entities = states
+                    | rejectattr('entity_id','in', excluded_entities)
+                    | rejectattr('entity_id','match','^person\.')
+                    | rejectattr('entity_id','match','^zone\.')
+                    | rejectattr('entity_id','match','^sun\.')
+                    | rejectattr('entity_id','match','^weather\.')
+                    | rejectattr('entity_id','match','^update\.')
+                    | rejectattr('entity_id','match','^event\.')
+                    | rejectattr('entity_id','match','^button\.')
+                    | rejectattr('entity_id','match','^image\.')
+                    | rejectattr('entity_id','match','^camera\.')
+                    | rejectattr('entity_id','match','^persistent_notification\.')
+                    | rejectattr('entity_id','match','.*_power_on_behavior$')
+                    | selectattr('state','in',['unavailable','unknown'])
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important; /* bright pink floor container */
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:alert-circle") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+          - type: markdown
+            content: "## Batteries below 10%"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 10px 4px 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important; /* soft pink */
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {# Pick battery *sensors* that look like percentages and are <
+                  10 #} {%- set entities = states.sensor
+                    | selectattr('attributes.device_class','equalto','battery')
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set low = namespace(list=[]) -%} {%- for e in entities -%}
+                    {%- set v = states(e) -%}
+                    {%- if v not in ['unknown','unavailable','none','None',''] -%}
+                      {%- set n = v | float(default=999) -%}
+                      {%- set unit = (state_attr(e,'unit_of_measurement') or '') | lower -%}
+                      {%- if unit in ['%','percent'] and n < 10 -%}
+                        {%- set low.list = low.list + [e] -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important;
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in low.list -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:battery-alert") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+          - type: markdown
+            content: "## Open doors or windows"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 10px 4px 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important;
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {%- set entities = states.binary_sensor
+                    | selectattr('attributes.device_class','in',['door','window'])
+                    | selectattr('state','equalto','on')
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important;
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:door-open") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+          - type: markdown
+            content: "## Water sensors activated"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 10px 4px 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important;
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {%- set entities = states.binary_sensor
+                    | selectattr('attributes.device_class','in',['moisture','water'])
+                    | selectattr('state','equalto','on')
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important;
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:water-alert") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+          - type: markdown
+            content: "## Smoke detectors activated"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 10px 4px 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important;
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {%- set entities = states.binary_sensor
+                    | selectattr('attributes.device_class','equalto','smoke')
+                    | selectattr('state','equalto','on')
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important;
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:smoke-detector-alert") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+          - type: markdown
+            content: "## Tamper detected"
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                  padding: 10px 4px 0 4px !important;
+                }
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important;
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {%- set excluded_entities = [ ] -%}
+
+                  {%- set tamper_entities = [
+                    'binary_sensor.terrace_door_open_sensor_tamper'
+                  ] -%}
+
+                  {%- set entities = states.binary_sensor
+                    | rejectattr('entity_id','in', excluded_entities)
+                    | selectattr('entity_id','in', tamper_entities)
+                    | selectattr('state','equalto','on')
+                    | map(attribute='entity_id')
+                    | list
+                  -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important;
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:shield-alert") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(220px, 260px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic

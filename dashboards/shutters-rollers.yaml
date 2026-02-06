@@ -1,0 +1,199 @@
+kiosk_mode:
+  user_settings:
+    - users:
+        - tablet
+      hide_account: true
+views:
+  - title: Shutters - Rollers
+    path: shutters-rollers
+    icon: mdi:window-shutter
+    type: panel
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                ha-card {
+                  background: #ffc0cb !important; /* soft pink */
+                  border-radius: 14px !important;
+                  box-shadow: none !important;
+                  padding: 10px !important;
+                }
+
+                vertical-stack$ ha-card,
+                layout-card$ ha-card {
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }
+            card:
+              type: custom:auto-entities
+              card:
+                type: vertical-stack
+              card_param: cards
+              filter:
+                template: >
+                  {%- set entities = states.cover | map(attribute='entity_id') |
+                  list -%}
+
+                  {%- set area_icons = {
+                    "Anuradha's Room": "mdi:human-child",
+                    "Attic stairs": "mdi:stairs",
+                    "Attic Store Room": "mdi:home-roof",
+                    "Back Garden House": "mdi:bike",
+                    "Basement Corridor": "mdi:home-floor-negative-1",
+                    "Bathroom": "mdi:bathtub",
+                    "Bedroom": "mdi:bed",
+                    "Downstairs Corridor": "mdi:home-floor-0",
+                    "Entryway": "mdi:door",
+                    "Front Garden House": "mdi:trash-can",
+                    "Garage": "mdi:garage",
+                    "Garden Shed": "mdi:shovel",
+                    "Guest Toilet": "mdi:toilet",
+                    "Heating Room": "mdi:heating-coil",
+                    "Ironing Room": "mdi:iron-board",
+                    "Kitchen": "mdi:stove",
+                    "Laundry Room": "mdi:washing-machine",
+                    "Living Room": "mdi:television",
+                    "Maheeka's Office": "mdi:face-woman",
+                    "Server Room": "mdi:server",
+                    "Staircase Corner": "mdi:stairs-down",
+                    "Store Room": "mdi:baguette",
+                    "Tom's Office": "mdi:face-man",
+                    "Upstairs Corridor": "mdi:home-floor-1"
+                  } -%}
+
+                  {%- set floor_levels = {
+                    "Garden": -2,
+                    "Basement": -1,
+                    "Ground Floor": 0,
+                    "First Floor": 1,
+                    "Attic": 2
+                  } -%}
+
+                  {%- set floor_icons = {
+                    "Garden": "mdi:tree",
+                    "Basement": "mdi:home-floor-negative-1",
+                    "Ground Floor": "mdi:home-floor-0",
+                    "First Floor": "mdi:home-floor-1",
+                    "Attic": "mdi:home-roof"
+                  } -%}
+
+                  {%- set header_style = "
+                    ha-card {
+                      background: #6a1b9a !important;
+                      --ha-card-background: #6a1b9a !important;
+                      color: white !important;
+                      border-radius: 10px !important;
+                      box-shadow: none !important;
+                      padding: 2px 8px !important;
+                    }
+                    ha-markdown {
+                      font-size: 12px !important;
+                      line-height: 1.0 !important;
+                    }
+                    p { margin: 0 !important; }
+                    ha-icon {
+                      color: white !important;
+                      --mdc-icon-size: 14px;
+                      vertical-align: middle;
+                    }
+                  " -%}
+
+                  {%- set floor_container_style = "
+                    ha-card {
+                      background: #ff3ea5 !important; /* bright pink floor container */
+                      border-radius: 14px !important;
+                      box-shadow: none !important;
+                    }
+                  " -%}
+
+                  {%- set ns = namespace(items=[]) -%} {%- for e in entities -%}
+                    {%- set floor = floor_name(e) -%}
+                    {%- set area  = area_name(e) -%}
+                    {%- if floor and area -%}
+                      {%- set lvl = floor_levels.get(floor, 999) -%}
+                      {%- set ns.items = ns.items + [{'floor': floor, 'level': lvl, 'area': area, 'entity': e}] -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- set ns.items = ns.items
+                    | sort(attribute='entity')
+                    | sort(attribute='area')
+                    | sort(attribute='level', reverse=true) -%}
+
+                  {%- set out = namespace(cards=[], prev_floor=none,
+                  floor_cards=[]) -%}
+
+                  {%- for item in ns.items -%}
+                    {%- if out.prev_floor is none -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- if item.floor != out.prev_floor -%}
+                      {%- if (out.floor_cards | length) > 0 -%}
+                        {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                        {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                        {%- set out.cards = out.cards + [{
+                          "type": "custom:stack-in-card",
+                          "mode": "vertical",
+                          "card_mod": { "style": floor_container_style },
+                          "cards": [
+                            { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                            {
+                              "type": "custom:layout-card",
+                              "layout_type": "custom:grid-layout",
+                              "layout": {
+                                "grid-template-columns": "repeat(auto-fit, minmax(200px, 240px))",
+                                "grid-gap": "10px",
+                                "justify-content": "center"
+                              },
+                              "cards": out.floor_cards
+                            }
+                          ]
+                        }] -%}
+                      {%- endif -%}
+
+                      {%- set out.floor_cards = [] -%}
+                      {%- set out.prev_floor = item.floor -%}
+                    {%- endif -%}
+
+                    {%- set friendly = state_attr(item.entity, "friendly_name") or item.entity -%}
+                    {%- set aicon = area_icons.get(item.area, "mdi:window-shutter") -%}
+
+                    {%- set out.floor_cards = out.floor_cards + [{
+                      "type": "tile",
+                      "entity": item.entity,
+                      "name": friendly,
+                      "icon": aicon,
+                      "tap_action": { "action": "more-info" }
+                    }] -%}
+                  {%- endfor -%}
+
+                  {%- if (out.floor_cards | length) > 0 -%}
+                    {%- set ficon = floor_icons.get(out.prev_floor, "mdi:home") -%}
+                    {%- set header = "<ha-icon icon='" ~ ficon ~ "'></ha-icon>&nbsp;&nbsp;**" ~ out.prev_floor ~ "**" -%}
+                    {%- set out.cards = out.cards + [{
+                      "type": "custom:stack-in-card",
+                      "mode": "vertical",
+                      "card_mod": { "style": floor_container_style },
+                      "cards": [
+                        { "type": "markdown", "content": header, "card_mod": { "style": header_style } },
+                        {
+                          "type": "custom:layout-card",
+                          "layout_type": "custom:grid-layout",
+                          "layout": {
+                            "grid-template-columns": "repeat(auto-fit, minmax(200px, 240px))",
+                            "grid-gap": "10px",
+                            "justify-content": "center"
+                          },
+                          "cards": out.floor_cards
+                        }
+                      ]
+                    }] -%}
+                  {%- endif -%}
+
+                  {{ out.cards | tojson }}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
