@@ -1,0 +1,10 @@
+id: climate_scheduler_apply_home_mode_to_all_groups
+alias: Climate Scheduler - Apply dropdown profile to all groups
+triggers:
+  - entity_id: input_select.climate_active_profile
+    trigger: state
+actions:
+  - data:
+      profile_name: "{{ trigger.to_state.state }}"
+    action: script.climate_scheduler_set_all_groups_profile
+mode: single

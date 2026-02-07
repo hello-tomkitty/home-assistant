@@ -1,0 +1,14 @@
+id: climate_scheduler_nightly_audits
+alias: Audits - Nightly (Home Mode + Climate Scheduler)
+description: ""
+triggers:
+  - at: 03:15:00
+    trigger: time
+actions:
+  - data:
+      audit: true
+      verbose: false
+    action: script.home_mode_sync_single_source_of_truth
+  - action: script.climate_scheduler_audit_profiles_consistency
+    data: {}
+mode: single

@@ -1,0 +1,15 @@
+id: light_switches_turn_off_all_at_3am
+alias: Turn off all lights at 3am
+description: ""
+triggers:
+  - at: 03:00:00
+    trigger: time
+actions:
+  - target:
+      entity_id: "{{ state_attr('sensor.light_switch_entity_list', 'entities')
+        }}
+
+        "
+    action: switch.turn_off
+    data: {}
+mode: single

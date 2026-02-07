@@ -1,0 +1,13 @@
+id: sync_home_mode_changes_to_lighting_and_heating
+alias: Home Mode -> Lighting Mode + Heating Profile
+triggers:
+  - trigger: state
+    entity_id: input_select.home_mode
+conditions:
+  - condition: template
+    value_template: "{{ trigger.to_state.state != 'Manual Override' }}"
+actions:
+  - action: script.home_mode_sync_single_source_of_truth
+    data:
+      home_mode: "{{ trigger.to_state.state }}"
+mode: restart

@@ -1,0 +1,42 @@
+id: kitchen_heating_external_thermometer
+alias: 'Kitchen Heating: external room temperature'
+description: ''
+triggers:
+- entity_id: sensor.kitchen_thermometer_temperature
+  trigger: state
+- minutes: /1
+  trigger: time_pattern
+conditions:
+- condition: template
+  value_template: '{{ states(''sensor.kitchen_thermometer_temperature'') | is_number
+    }}
+
+    '
+actions:
+- target:
+    entity_id: select.kitchen_heating_temperature_sensor_select
+  data:
+    option: external
+  action: select.select_option
+- variables:
+    t_room: '{{ (states(''sensor.kitchen_thermometer_temperature'') | float) | round(1)
+      }}
+
+      '
+    t_last: '{{ states(''number.kitchen_heating_external_temperature_input'') }}
+
+      '
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ not (t_last | is_number) or (t_last | float) != (t_room
+        | float) }}
+
+        '
+    sequence:
+    - target:
+        entity_id: number.kitchen_heating_external_temperature_input
+      data:
+        value: '{{ t_room }}'
+      action: number.set_value
+mode: single

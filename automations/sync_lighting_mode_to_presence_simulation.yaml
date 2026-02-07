@@ -1,0 +1,56 @@
+id: sync_lighting_mode_to_presence_simulation
+alias: Lighting Mode → Presence Simulation
+triggers:
+  - entity_id: input_select.lighting_mode
+    trigger: state
+actions:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: input_select.lighting_mode
+            state:
+              - "Humans at Home: no simulation"
+        sequence:
+          - target:
+              entity_id:
+                - switch.presence_simulation_lights
+                - group.simulated_occupancy_lights
+                - switch.ground_floor_corridor_light
+                - switch.first_floor_corridor_light
+            action: switch.turn_off
+      - conditions:
+          - condition: state
+            entity_id: input_select.lighting_mode
+            state:
+              - "Nobody Home: simulated occupancy"
+        sequence:
+          - target:
+              entity_id:
+                "{{ state_attr('sensor.light_switch_entity_list', 'entities')
+                }}
+
+                "
+            action: switch.turn_off
+          - target:
+              entity_id: switch.presence_simulation_lights
+            action: switch.turn_on
+      - conditions:
+          - condition: state
+            entity_id: input_select.lighting_mode
+            state:
+              - "Lulu Home Alone: simulated occupancy + corridor lights"
+        sequence:
+          - target:
+              entity_id:
+                "{{ state_attr('sensor.light_switch_entity_list', 'entities')
+                }}
+
+                "
+            action: switch.turn_off
+          - target:
+              entity_id:
+                - switch.presence_simulation_lights
+                - switch.ground_floor_corridor_light
+                - switch.first_floor_corridor_light
+            action: switch.turn_on
+mode: restart

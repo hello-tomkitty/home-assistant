@@ -1,0 +1,60 @@
+mode-yaml:
+  mode: yaml
+  filename: dashboards/mode.yaml
+  title: Mode
+  icon: mdi:apple-keyboard-command
+  show_in_sidebar: true
+light-switches-yaml:
+  mode: yaml
+  filename: dashboards/lights-switches.yaml
+  title: Lights - Switches
+  icon: mdi:light-switch
+  show_in_sidebar: true
+heating-thermostats-yaml:
+  mode: yaml
+  filename: dashboards/heating-thermostats.yaml
+  title: Heating - Thermostats
+  icon: mdi:thermostat
+  show_in_sidebar: true
+heating-schedules-yaml:
+  mode: yaml
+  filename: dashboards/heating-schedules.yaml
+  title: Heating - Schedules
+  icon: mdi:heating-coil
+  show_in_sidebar: true
+shutters-rollers-yaml:
+  mode: yaml
+  filename: dashboards/shutters-rollers.yaml
+  title: Shutters - Rollers
+  icon: mdi:window-shutter
+  show_in_sidebar: true
+batteries-yaml:
+  mode: yaml
+  filename: dashboards/batteries.yaml
+  title: Batteries
+  icon: mdi:battery-50
+  show_in_sidebar: true
+fire-tv-yaml:
+  mode: yaml
+  filename: dashboards/fire-tv.yaml
+  title: Fire TV
+  icon: mdi:television
+  show_in_sidebar: true
+alarms-yaml:
+  mode: yaml
+  filename: dashboards/alarms.yaml
+  title: Alarms
+  icon: mdi:alarm-light-outline
+  show_in_sidebar: true
+audit-yaml:
+  mode: yaml
+  filename: dashboards/audit.yaml
+  title: Audit
+  icon: mdi:bug-check-outline
+  show_in_sidebar: true
+map-yaml:
+  mode: yaml
+  filename: dashboards/map.yaml
+  title: Map
+  icon: mdi:map
+  show_in_sidebar: true

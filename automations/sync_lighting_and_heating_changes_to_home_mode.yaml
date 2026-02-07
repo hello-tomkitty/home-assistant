@@ -1,0 +1,15 @@
+id: sync_lighting_and_heating_changes_to_home_mode
+alias: Lighting/Heating change -> set Home Mode (auto-exit override)
+triggers:
+  - trigger: state
+    entity_id:
+      - input_select.lighting_mode
+      - input_select.climate_active_profile
+conditions:
+  - condition: state
+    entity_id: input_boolean.home_mode_sync
+    state: "off"
+actions:
+  - delay: 00:00:01
+  - action: script.home_mode_sync_single_source_of_truth
+mode: restart

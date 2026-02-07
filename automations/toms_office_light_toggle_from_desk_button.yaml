@@ -1,0 +1,16 @@
+id: toms_office_light_toggle_from_desk_button
+alias: Desk button Tom's office
+description: ""
+triggers:
+  - domain: mqtt
+    device_id: 47273dc032abf74c01d5c349e2fd2559
+    type: action
+    subtype: single
+    trigger: device
+conditions: []
+actions:
+  - type: toggle
+    device_id: c163cb454b5f1a3823390e4df3a72908
+    entity_id: 34cff283dd99109d4026545fb55827b4
+    domain: switch
+mode: single
