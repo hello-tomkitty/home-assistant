@@ -1,0 +1,11 @@
+all_light_switches_off:
+  alias: All light switches off
+  mode: single
+  icon: mdi:lightbulb-group-off
+  sequence:
+    - target:
+        entity_id:
+          "{{ state_attr('sensor.light_switch_entity_list', 'entities')\n   |
+          default([], true) }}\n"
+      action: homeassistant.turn_off
+  description: ""

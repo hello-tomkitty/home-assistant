@@ -1,0 +1,119 @@
+climate_scheduler_audit_profiles_consistency:
+  alias: Climate Scheduler - Audit profiles & consistency
+  mode: single
+  fields:
+    verbose:
+      description: If true, always post the report. If false, only notify when issues
+        are found.
+      example: true
+  sequence:
+  - variables:
+      verbose_mode: '{{ verbose | default(false) }}'
+      helper: input_select.climate_active_profile
+      schedules: "{{ states.climate\n  | selectattr('entity_id','match','^climate\\.climate_scheduler_climate_schedule_')\n
+        \ | map(attribute='entity_id')\n  | list }}"
+      helper_options: '{{ state_attr(helper, ''options'') or [] }}'
+  - variables:
+      issues_found: "{% set issues = false %}\n{% if states[helper] is none %}\n  {%
+        set issues = true %}\n{% endif %}\n{% if helper_options | length == 0 %}\n
+        \ {% set issues = true %}\n{% endif %}\n{% if schedules | length == 0 %}\n
+        \ {% set issues = true %}\n{% else %}\n  {# check missing/extra across schedules
+        #}\n  {% for e in schedules %}\n    {% set modes = state_attr(e,'preset_modes')
+        or [] %}\n\n    {% for ho in helper_options %}\n      {% if ho not in modes
+        %}\n        {% set issues = true %}\n      {% endif %}\n    {% endfor %}\n\n
+        \   {% for m in modes %}\n      {% if m not in helper_options %}\n        {%
+        set issues = true %}\n      {% endif %}\n    {% endfor %}\n  {% endfor %}\n\n
+        \ {# whitespace/spelling variants: same normalized string with >1 raw variant
+        #}\n  {% set norm = namespace(map={}) %}\n  {% for raw in helper_options %}\n
+        \   {% set k = raw | regex_replace('\\s+',' ') | trim %}\n    {% set cur =
+        norm.map.get(k, []) %}\n    {% if raw not in cur %}\n      {% set cur = cur
+        + [raw] %}\n    {% endif %}\n    {% set norm.map = dict(norm.map, **{k: cur})
+        %}\n  {% endfor %}\n  {% for e in schedules %}\n    {% set modes = state_attr(e,'preset_modes')
+        or [] %}\n    {% for raw in modes %}\n      {% set k = raw | regex_replace('\\s+','
+        ') | trim %}\n      {% set cur = norm.map.get(k, []) %}\n      {% if raw not
+        in cur %}\n        {% set cur = cur + [raw] %}\n      {% endif %}\n      {%
+        set norm.map = dict(norm.map, **{k: cur}) %}\n    {% endfor %}\n  {% endfor
+        %}\n\n  {% for k, cur in norm.map.items() %}\n    {% if cur | length > 1 %}\n
+        \     {% set issues = true %}\n    {% endif %}\n  {% endfor %}\n{% endif %}\n{{
+        issues }}"
+      status_icon: '{{ ''❌'' if issues_found else ''✅'' }}'
+      status_text: '{{ ''FAIL (issues found)'' if issues_found else ''PASS (no issues
+        found)'' }}'
+      notif_title: '{{ status_icon ~ '' Climate Scheduler Audit — '' ~ (''FAIL'' if
+        issues_found else ''PASS'') }}'
+      report: "{{ status_icon }} Climate Scheduler Audit: {{ status_text }}\n\nHelper:
+        {{ helper }}\nHelper exists: {{ states[helper] is not none }}\nSchedules found:
+        {{ schedules | length }}\n\n=== Helper options (raw, exact) ===\n{% if helper_options
+        | length == 0 %}\n(none)\n{% else %}\n{% for o in helper_options %}\n- {{
+        o }}\n{% endfor %}\n{% endif %}\n\n{% if schedules | length == 0 %}\nNo climate.climate_scheduler_climate_schedule_*
+        entities found.\n{% else %}\n\n{# Build union/intersection RAW #}\n{% set
+        union = namespace(items=[]) %}\n{% set inter = namespace(items=[]) %}\n{%
+        set first = true %}\n\n{# Collect all raw strings + their normalized keys
+        to detect whitespace-only mismatches #}\n{% set norm_map = namespace(keys=[],
+        variants_raw=[], sources=[]) %}\n\n{# helper into norm_map #}\n{% for raw
+        in helper_options %}\n  {% set norm = raw | regex_replace('\\s+',' ') | trim
+        %}\n  {% set idx = norm_map.keys.index(norm) if norm in norm_map.keys else
+        -1 %}\n  {% if idx == -1 %}\n    {% set norm_map.keys = norm_map.keys + [norm]
+        %}\n    {% set norm_map.variants_raw = norm_map.variants_raw + [[raw]] %}\n
+        \   {% set norm_map.sources = norm_map.sources + [['helper']] %}\n  {% else
+        %}\n    {% if raw not in norm_map.variants_raw[idx] %}\n      {% set cur =
+        norm_map.variants_raw[idx] + [raw] %}\n      {% set norm_map.variants_raw
+        = norm_map.variants_raw[:idx] + [cur] + norm_map.variants_raw[idx+1:] %}\n
+        \   {% endif %}\n    {% if 'helper' not in norm_map.sources[idx] %}\n      {%
+        set cur2 = norm_map.sources[idx] + ['helper'] %}\n      {% set norm_map.sources
+        = norm_map.sources[:idx] + [cur2] + norm_map.sources[idx+1:] %}\n    {% endif
+        %}\n  {% endif %}\n{% endfor %}\n\n=== Per-schedule checks (raw, exact) ===\n{%
+        for e in schedules %}\n  {% set group = state_attr(e,'group_name') or e %}\n
+        \ {% set modes = state_attr(e,'preset_modes') or [] %}\n\n- {{ group }} ({{
+        e }}) profiles: {{ modes | length }}\n\n  {# RAW missing helper options in
+        this schedule #}\n  {% set missing = namespace(items=[]) %}\n  {% for ho in
+        helper_options %}\n    {% if ho not in modes %}\n      {% set missing.items
+        = missing.items + [ho] %}\n    {% endif %}\n  {% endfor %}\n  {% if missing.items
+        | length > 0 %}\n  MISSING (from schedule): {{ missing.items | join(' | ')
+        }}\n  {% endif %}\n\n  {# RAW schedule profiles not present in helper #}\n
+        \ {% set extra = namespace(items=[]) %}\n  {% for m in modes %}\n    {% if
+        m not in helper_options %}\n      {% set extra.items = extra.items + [m] %}\n
+        \   {% endif %}\n  {% endfor %}\n  {% if extra.items | length > 0 %}\n  EXTRA
+        (not in helper): {{ extra.items | join(' | ') }}\n  {% endif %}\n\n  {# Build
+        RAW union #}\n  {% for m in modes %}\n    {% if m not in union.items %}\n
+        \     {% set union.items = union.items + [m] %}\n    {% endif %}\n  {% endfor
+        %}\n\n  {# Build RAW intersection #}\n  {% if first %}\n    {% set inter.items
+        = modes %}\n    {% set first = false %}\n  {% else %}\n    {% set new_inter
+        = namespace(items=[]) %}\n    {% for x in inter.items %}\n      {% if x in
+        modes %}\n        {% set new_inter.items = new_inter.items + [x] %}\n      {%
+        endif %}\n    {% endfor %}\n    {% set inter.items = new_inter.items %}\n
+        \ {% endif %}\n\n  {# Add schedule modes into norm_map #}\n  {% for raw in
+        modes %}\n    {% set norm = raw | regex_replace('\\s+',' ') | trim %}\n    {%
+        set idx = norm_map.keys.index(norm) if norm in norm_map.keys else -1 %}\n
+        \   {% if idx == -1 %}\n      {% set norm_map.keys = norm_map.keys + [norm]
+        %}\n      {% set norm_map.variants_raw = norm_map.variants_raw + [[raw]] %}\n
+        \     {% set norm_map.sources = norm_map.sources + [[group]] %}\n    {% else
+        %}\n      {% if raw not in norm_map.variants_raw[idx] %}\n        {% set cur
+        = norm_map.variants_raw[idx] + [raw] %}\n        {% set norm_map.variants_raw
+        = norm_map.variants_raw[:idx] + [cur] + norm_map.variants_raw[idx+1:] %}\n
+        \     {% endif %}\n      {% if group not in norm_map.sources[idx] %}\n        {%
+        set cur2 = norm_map.sources[idx] + [group] %}\n        {% set norm_map.sources
+        = norm_map.sources[:idx] + [cur2] + norm_map.sources[idx+1:] %}\n      {%
+        endif %}\n    {% endif %}\n  {% endfor %}\n\n{% endfor %}\n\n=== Intersection
+        (common to ALL schedules, raw/exact) ===\n{% if inter.items | length == 0
+        %}\n(none)\n{% else %}\n{% for x in inter.items | sort %}\n- {{ x }}\n{% endfor
+        %}\n{% endif %}\n\n=== Union (all schedule profiles, raw/exact) ===\n{% if
+        union.items | length == 0 %}\n(none)\n{% else %}\n{% for x in union.items
+        | sort %}\n- {{ x }}\n{% endfor %}\n{% endif %}\n\n=== Whitespace/spelling
+        variants (same normalized text, different raw strings) ===\n{% set any = false
+        %}\n{% for i in range(0, norm_map.keys | length) %}\n  {% set variants = norm_map.variants_raw[i]
+        %}\n  {% if variants | length > 1 %}\n    {% set any = true %}\n- Normalized:
+        {{ norm_map.keys[i] }}\n  Variants: {{ variants | join(' | ') }}\n  Seen in:
+        {{ norm_map.sources[i] | join(', ') }}\n  {% endif %}\n{% endfor %}\n{% if
+        not any %}\n(none)\n{% endif %}\n\n{% endif %}"
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ issues_found or verbose_mode }}'
+      sequence:
+      - action: persistent_notification.create
+        data:
+          title: '{{ notif_title }}'
+          message: '{{ report }}'
+    default: []
+  description: ''

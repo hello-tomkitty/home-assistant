@@ -1,0 +1,10 @@
+toggle_all_light_switches:
+  alias: Toggle all light switches
+  mode: single
+  icon: mdi:lightbulb-group
+  sequence:
+  - target:
+      entity_id: "{{ state_attr('sensor.light_switch_entity_list', 'entities')\n   |
+        default([], true) }}\n"
+    action: homeassistant.toggle
+  description: ''

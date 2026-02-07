@@ -1,0 +1,91 @@
+climate_scheduler_set_all_groups_profile:
+  alias: Climate Scheduler - Set all groups profile
+  mode: single
+  fields:
+    profile_name:
+      description:
+        Profile to activate across all Climate Scheduler groups (must match
+        preset_modes exactly)
+      example: "Vacation: Multiple-Day Absence"
+  sequence:
+    - variables:
+        schedule_entities:
+          "{{ states.climate\n  | selectattr('entity_id','match','^climate\\.climate_scheduler_climate_schedule_')\n
+          \ | map(attribute='entity_id')\n  | list }}"
+    - variables:
+        applied_count: 0
+        skipped_missing_profile: []
+        skipped_missing_group_name: []
+        skipped_no_preset_modes: []
+    - repeat:
+        for_each: "{{ schedule_entities }}"
+        sequence:
+          - variables:
+              sched_entity: "{{ repeat.item }}"
+              group_name: "{{ state_attr(sched_entity, 'group_name') }}"
+              preset_modes: "{{ state_attr(sched_entity, 'preset_modes') }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template:
+                      "{{ group_name is none or (group_name | string | trim)
+                      == '' }}"
+                sequence:
+                  - variables:
+                      skipped_missing_group_name:
+                        "{{ skipped_missing_group_name + [sched_entity]
+                        }}"
+              - conditions:
+                  - condition: template
+                    value_template: "{{ preset_modes is none }}"
+                sequence:
+                  - variables:
+                      skipped_no_preset_modes:
+                        "{{ skipped_no_preset_modes + [ (group_name
+                        or sched_entity) ~ ' (' ~ sched_entity ~ ')' ] }}"
+              - conditions:
+                  - condition: template
+                    value_template: "{{ profile_name in preset_modes }}"
+                sequence:
+                  - action: climate_scheduler.set_active_profile
+                    data:
+                      schedule_id: "{{ group_name }}"
+                      profile_name: "{{ profile_name }}"
+                  - variables:
+                      applied_count: "{{ applied_count + 1 }}"
+              - conditions: []
+                sequence:
+                  - variables:
+                      skipped_missing_profile:
+                        "{{ skipped_missing_profile\n   + [ (group_name
+                        or 'UNKNOWN') ~ ' (' ~ sched_entity ~ ') supports: ' ~ (preset_modes
+                        | join(', ')) ] }}"
+    - choose:
+        - conditions:
+            - condition: template
+              value_template:
+                "{{ applied_count == 0\n   or (skipped_missing_profile | length)
+                > 0\n   or (skipped_missing_group_name | length) > 0\n   or (skipped_no_preset_modes
+                | length) > 0 }}"
+          sequence:
+            - action: persistent_notification.create
+              data:
+                title: Climate Scheduler - Profile apply result
+                message:
+                  'Requested profile: "{{ profile_name }}" Groups found: {{ schedule_entities
+                  | length }} Applied to: {{ applied_count }}
+
+                  {% if applied_count == 0 %} ❌ Applied to none. The profile likely doesn''t
+                  exist on any schedule (or schedules couldn''t be resolved). {% endif %}
+
+                  ⚠️ Skipped (profile missing) ({{ skipped_missing_profile | length }}):
+                  {% if skipped_missing_profile | length == 0 %}(none){% else %} - {{ skipped_missing_profile
+                  | join(''\n- '') }} {% endif %}
+
+                  ⚠️ Skipped (missing group_name) ({{ skipped_missing_group_name | length
+                  }}): {% if skipped_missing_group_name | length == 0 %}(none){% else %}
+                  - {{ skipped_missing_group_name | join(''\n- '') }} {% endif %}
+
+                  ⚠️ Skipped (no preset_modes attribute) ({{ skipped_no_preset_modes | length
+                  }}): {% if skipped_no_preset_modes | length == 0 %}(none){% else %} -
+                  {{ skipped_no_preset_modes | join(''\n- '') }} {% endif %}'

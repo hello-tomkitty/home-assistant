@@ -1,0 +1,204 @@
+home_mode_sync_single_source_of_truth:
+  alias: Home Mode - Sync (single source of truth)
+  mode: queued
+  max: 5
+  fields:
+    home_mode:
+      description: If provided, apply this Home Mode to lighting+climate. If omitted,
+        derive Home Mode from lighting+climate.
+      example: People home
+    audit:
+      description: If true, validate mapping vs input_select options and report; do
+        not change anything.
+      example: true
+    verbose:
+      description: Only relevant in audit mode. If true, report even when no problems
+        are found.
+      example: true
+  sequence:
+  - variables:
+      home: input_select.home_mode
+      light: input_select.lighting_mode
+      climate: input_select.climate_active_profile
+      lock: input_boolean.home_mode_sync
+      mapping:
+        People home:
+          lighting: 'Humans at Home: no simulation'
+          climate: 'Default: School Day / Home Office / Weekend'
+        School break:
+          lighting: 'Humans at Home: no simulation'
+          climate: 'School Break: Everyone Mostly at Home'
+        Nobody home:
+          lighting: 'Nobody Home: simulated occupancy'
+          climate: 'Day Absence: School Day / Office / Day Trip'
+        Lulu home alone:
+          lighting: 'Lulu Home Alone: simulated occupancy + corridor lights'
+          climate: 'Day Absence: School Day / Office / Day Trip'
+        Vacation:
+          lighting: 'Nobody Home: simulated occupancy'
+          climate: 'Vacation: Multiple-Day Absence'
+      requested_home_mode: '{{ home_mode | default('''', true) }}'
+      cur_light: '{{ states(light) }}'
+      cur_climate: '{{ states(climate) }}'
+      audit_mode: '{{ audit | default(false) }}'
+      verbose_mode: '{{ verbose | default(false) }}'
+  - variables:
+      home_options: '{{ state_attr(home, ''options'') | default([], true) }}'
+      light_options: '{{ state_attr(light, ''options'') | default([], true) }}'
+      climate_options: '{{ state_attr(climate, ''options'') | default([], true) }}'
+      unmapped_home_modes: "{% set ns = namespace(items=[]) %} {% for hm in home_options
+        %}\n  {% if hm not in ['Manual Override'] and hm not in mapping.keys() %}\n
+        \   {% set ns.items = ns.items + [hm] %}\n  {% endif %}\n{% endfor %} {{ ns.items
+        }}"
+      invalid_home_mode_keys: "{% set ns = namespace(items=[]) %} {% for k in mapping.keys()
+        %}\n  {% if k not in home_options %}\n    {% set ns.items = ns.items + [k]
+        %}\n  {% endif %}\n{% endfor %} {{ ns.items }}"
+      invalid_lighting_values: "{% set ns = namespace(items=[]) %} {% for k, v in
+        mapping.items() %}\n  {% if v.lighting not in light_options %}\n    {% set
+        ns.items = ns.items + [k ~ ' -> ' ~ v.lighting] %}\n  {% endif %}\n{% endfor
+        %} {{ ns.items }}"
+      invalid_climate_values: "{% set ns = namespace(items=[]) %} {% for k, v in mapping.items()
+        %}\n  {% if v.climate not in climate_options %}\n    {% set ns.items = ns.items
+        + [k ~ ' -> ' ~ v.climate] %}\n  {% endif %}\n{% endfor %} {{ ns.items }}"
+      duplicate_pairs: "{% set seen = namespace(pairs={}) %} {% for k, v in mapping.items()
+        %}\n  {% set key = v.lighting ~ ' || ' ~ v.climate %}\n  {% if key in seen.pairs
+        %}\n    {% set seen.pairs = dict(seen.pairs, **{ key: seen.pairs[key] + [k]
+        }) %}\n  {% else %}\n    {% set seen.pairs = dict(seen.pairs, **{ key: [k]
+        }) %}\n  {% endif %}\n{% endfor %} {% set ns = namespace(items=[]) %} {% for
+        p, modes in seen.pairs.items() %}\n  {% if modes | length > 1 %}\n    {% set
+        ns.items = ns.items + [p ~ ' => ' ~ (modes | join(', '))] %}\n  {% endif %}\n{%
+        endfor %} {{ ns.items }}"
+      audit_ok: "{{\n  (unmapped_home_modes | length == 0)\n  and (invalid_home_mode_keys
+        | length == 0)\n  and (invalid_lighting_values | length == 0)\n  and (invalid_climate_values
+        | length == 0)\n  and (duplicate_pairs | length == 0)\n}}"
+      mapped_home_modes: '{{ mapping.keys() | list | sort }}'
+      mapped_lighting_options: "{% set ns = namespace(items=[]) %} {% for k, v in
+        mapping.items() %}\n  {% if v.lighting not in ns.items %}\n    {% set ns.items
+        = ns.items + [v.lighting] %}\n  {% endif %}\n{% endfor %} {{ ns.items | sort
+        }}"
+      mapped_climate_options: "{% set ns = namespace(items=[]) %} {% for k, v in mapping.items()
+        %}\n  {% if v.climate not in ns.items %}\n    {% set ns.items = ns.items +
+        [v.climate] %}\n  {% endif %}\n{% endfor %} {{ ns.items | sort }}"
+      home_options_missing_in_mapping: "{% set ns = namespace(items=[]) %} {% for
+        o in home_options %}\n  {% if o not in mapped_home_modes %}\n    {% set ns.items
+        = ns.items + [o] %}\n  {% endif %}\n{% endfor %} {{ ns.items | sort }}"
+      lighting_options_missing_in_mapping: "{% set ns = namespace(items=[]) %} {%
+        for o in light_options %}\n  {% if o not in mapped_lighting_options %}\n    {%
+        set ns.items = ns.items + [o] %}\n  {% endif %}\n{% endfor %} {{ ns.items
+        | sort }}"
+      climate_options_missing_in_mapping: "{% set ns = namespace(items=[]) %} {% for
+        o in climate_options %}\n  {% if o not in mapped_climate_options %}\n    {%
+        set ns.items = ns.items + [o] %}\n  {% endif %}\n{% endfor %} {{ ns.items
+        | sort }}"
+      audit_message: "{% set lines = [] %}\n{% if unmapped_home_modes|length > 0 %}\n
+        \ {% set lines = lines + ['home_mode options missing mapping: ' ~ (unmapped_home_modes|join(',
+        '))] %}\n{% endif %}\n{% if invalid_home_mode_keys|length > 0 %}\n  {% set
+        lines = lines + ['mapping keys not in home_mode options: ' ~ (invalid_home_mode_keys|join(',
+        '))] %}\n{% endif %}\n{% if invalid_lighting_values|length > 0 %}\n  {% set
+        lines = lines + ['invalid lighting options referenced: ' ~ (invalid_lighting_values|join(';
+        '))] %}\n{% endif %}\n{% if invalid_climate_values|length > 0 %}\n  {% set
+        lines = lines + ['invalid climate options referenced: ' ~ (invalid_climate_values|join(';
+        '))] %}\n{% endif %}\n{% if duplicate_pairs|length > 0 %}\n  {% set lines
+        = lines + ['duplicate lighting+climate pairs: ' ~ (duplicate_pairs|join('
+        | '))] %}\n{% endif %}\n{{ lines | join('\\n') }}"
+      audit_ok_message: "✅ Mapping audit passed.\n\nHome Mode coverage\n- home_mode
+        options: {{ home_options | length }}\n- mapping keys: {{ mapped_home_modes
+        | length }}\n- options missing in mapping:\n{% if home_options_missing_in_mapping
+        | length > 0 %}\n{% for o in home_options_missing_in_mapping %}\n  * {{ o
+        }}\n{% endfor %}\n{% else %}\n  * (none)\n{% endif %}\n\nLighting coverage\n-
+        lighting_mode options: {{ light_options | length }}\n- options referenced
+        by mapping: {{ mapped_lighting_options | length }}\n- lighting options NOT
+        referenced by mapping:\n{% if lighting_options_missing_in_mapping | length
+        > 0 %}\n{% for o in lighting_options_missing_in_mapping %}\n  * {{ o }}\n{%
+        endfor %}\n{% else %}\n  * (none)\n{% endif %}\n\nClimate coverage\n- climate
+        profile options: {{ climate_options | length }}\n- options referenced by mapping:
+        {{ mapped_climate_options | length }}\n- climate options NOT referenced by
+        mapping:\n{% if climate_options_missing_in_mapping | length > 0 %}\n{% for
+        o in climate_options_missing_in_mapping %}\n  * {{ o }}\n{% endfor %}\n{%
+        else %}\n  * (none)\n{% endif %}\n\nConsistency checks\n- unknown home_mode
+        mapping keys: {{ invalid_home_mode_keys | length }}\n- invalid lighting references:
+        {{ invalid_lighting_values | length }}\n- invalid climate references: {{ invalid_climate_values
+        | length }}\n- ambiguous derive (duplicate lighting+climate pairs): {{ duplicate_pairs
+        | length }}"
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ audit_mode and (not audit_ok or verbose_mode) }}'
+      sequence:
+      - action: persistent_notification.create
+        data:
+          title: Home Mode Mapping Audit {{ '✅' if audit_ok else '❌' }}
+          message: '{{ audit_ok_message if audit_ok else audit_message }}'
+      - stop: Audit mode
+    - conditions:
+      - condition: template
+        value_template: '{{ audit_mode }}'
+      sequence:
+      - stop: Audit mode silent
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ requested_home_mode | trim != '''' }}'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ requested_home_mode == ''Manual Override'' }}'
+          sequence: []
+        default:
+        - action: input_boolean.turn_on
+          target:
+            entity_id: '{{ lock }}'
+        - delay: 00:00:01
+        - variables:
+            entry: '{{ mapping.get(requested_home_mode) }}'
+        - choose:
+          - conditions:
+            - condition: template
+              value_template: '{{ entry is not none }}'
+            sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: '{{ light }}'
+              data:
+                option: '{{ entry.lighting }}'
+            - action: input_select.select_option
+              target:
+                entity_id: '{{ climate }}'
+              data:
+                option: '{{ entry.climate }}'
+          - conditions: []
+            sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: '{{ home }}'
+              data:
+                option: Manual Override
+        - delay: 00:00:01
+        - action: input_boolean.turn_off
+          target:
+            entity_id: '{{ lock }}'
+    - conditions: []
+      sequence:
+      - variables:
+          matches: "{% set ns = namespace(items=[]) %} {% for k, v in mapping.items()
+            %}\n  {% if v.lighting == cur_light and v.climate == cur_climate %}\n
+            \   {% set ns.items = ns.items + [k] %}\n  {% endif %}\n{% endfor %} {{
+            ns.items }}"
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ matches | length == 1 }}'
+          sequence:
+          - action: input_select.select_option
+            target:
+              entity_id: '{{ home }}'
+            data:
+              option: '{{ matches[0] }}'
+        default:
+        - action: input_select.select_option
+          target:
+            entity_id: '{{ home }}'
+          data:
+            option: Manual Override
+  description: ''
