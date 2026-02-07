@@ -131,3 +131,49 @@
           {%- endfor -%}
 
           {{ out.rows | tojson }}
+
+# - sensor:
+#     - default_entity_id: sensor.residual_waste
+#       attributes:
+#         next_date: "{{ state_attr('sensor.residual_waste', 'Restmülltonne 40-240
+#           Liter') }}"
+#         days: "{{ states('sensor.residual_waste')|int }}"
+#       state:
+#         "{% if states('sensor.residual_waste')|int > 2 %}\n  2\n{% else %}\n  {{
+#         states('sensor.residual_waste')|int }}\n{% endif %}"
+#       name: residual_waste
+# - sensor:
+#     - default_entity_id: sensor.paper_trash
+#       attributes:
+#         next_date:
+#           "{{ state_attr('sensor.paper_trash', 'Papiertonne 4-wöchentlich')
+#           }}"
+#         days: "{{ states('sensor.paper_trash')|int }}"
+#       state:
+#         "{% if states('sensor.paper_trash')|int > 2 %}\n  2\n{% else %}\n  {{ states('sensor.paper_trash')|int
+#         }}\n{% endif %}"
+#       name: paper_trash
+
+# - sensor:
+#     - default_entity_id: sensor.recyclable_garbage
+#       attributes:
+#         next_date:
+#           "{{ state_attr('sensor.recyclable_garbage', 'Wertstofftonne 80-1100
+#           Liter') }}"
+#         days: "{{ states('sensor.recyclable_garbage')|int }}"
+#       state:
+#         "{% if states('sensor.recyclable_garbage')|int > 2 %}\n  2\n{% else %}\n
+#         \ {{ states('sensor.recyclable_garbage')|int }}\n{% endif %}"
+#       name: recyclable_garbage
+
+# - sensor:
+#     - default_entity_id: sensor.organic_waste
+#       attributes:
+#         next_date:
+#           "{{ state_attr('sensor.organic_waste', 'Biotonne 60–240 Liter')
+#           }}"
+#         days: "{{ states('sensor.organic_waste')|int }}"
+#       state:
+#         "{% if states('sensor.organic_waste')|int > 2 %}\n  2\n{% else %}\n  {{
+#         states('sensor.organic_waste')|int }}\n{% endif %}"
+#       name: organic_waste

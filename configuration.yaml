@@ -14,3 +14,50 @@ logger: !include logger.yaml
 
 lovelace:
   dashboards: !include dashboards.yaml
+
+waste_collection_schedule:
+  sources:
+    - name: awido_de
+      args:
+        customer: ffb
+        city: Germering
+        street: waldhornstr.
+      # optional filters
+      customize:
+        - type: Residual Waste
+          icon: mdi:trash-can
+        - type: Paper Trash
+          icon: mdi:trash-can
+        - type: Recyclable Garbage
+          icon: mdi:trash-can
+        - type: Organic Waste
+          icon: mdi:trash-can
+
+sensor:
+  - platform: waste_collection_schedule
+    name: residual_waste
+    types:
+      - Restmülltonne 40-240 Liter
+    details_format: appointment_types
+    value_template: 'in {{value.daysTo}} day(s) on {{value.date.strftime("%a")}}, {{value.date.strftime("%d/%m/%Y")}}'
+
+  - platform: waste_collection_schedule
+    name: paper_trash
+    types:
+      - Papiertonne 4-wöchentlich
+    details_format: appointment_types
+    value_template: 'in {{value.daysTo}} day(s) on {{value.date.strftime("%a")}}, {{value.date.strftime("%d/%m/%Y")}}'
+
+  - platform: waste_collection_schedule
+    name: recyclable_garbage
+    types:
+      - Wertstofftonne 80-1100 Liter
+    details_format: appointment_types
+    value_template: 'in {{value.daysTo}} day(s) on {{value.date.strftime("%a")}}, {{value.date.strftime("%d/%m/%Y")}}'
+
+  - platform: waste_collection_schedule
+    name: organic_waste
+    types:
+      - Biotonne 60–240 Liter
+    details_format: appointment_types
+    value_template: 'in {{value.daysTo}} day(s) on {{value.date.strftime("%a")}}, {{value.date.strftime("%d/%m/%Y")}}'

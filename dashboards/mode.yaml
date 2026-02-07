@@ -280,7 +280,38 @@ views:
         cards:
           - type: markdown
             content: |
-              ### Weather - tap for forecast
+              ### Weather - tap for details
           - type: weather-forecast
             entity: weather.forecast_home
             show_forecast: true
+          - type: markdown
+            content: |
+              ### Garbage collection
+          - type: custom:mushroom-entity-card
+            entity: sensor.residual_waste
+            name: Residual waste
+            icon: mdi:trash-can-outline
+            icon_color: grey
+            primary_info: name
+            secondary_info: state
+          - type: custom:mushroom-entity-card
+            entity: sensor.organic_waste
+            name: Organic waste
+            icon: mdi:leaf
+            icon_color: brown
+            primary_info: name
+            secondary_info: state
+          - type: custom:mushroom-entity-card
+            entity: sensor.paper_trash
+            name: Paper trash
+            icon: mdi:file-multiple
+            icon_color: blue
+            primary_info: name
+            secondary_info: state
+          - type: custom:mushroom-entity-card
+            entity: sensor.recyclable_garbage
+            name: Recyclable garbage
+            icon: mdi:recycle
+            icon_color: green
+            primary_info: name
+            secondary_info: state
